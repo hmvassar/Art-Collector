@@ -29,8 +29,22 @@ import { fetchQueryResultsFromTermAndValue } from '../api';
  * finally:
  *  - call setIsLoading, set it to false
  */
-const Searchable = (props) => {
-  
+const Searchable = ({searchTerm, searchValue, setIsLoading, setSearchResults}) => {
+  return (
+    <span className='content'>
+        <a href="#" onClick={async (event) => {
+            event.preventDefault();
+            setIsLoading(true);
+            try {
+                setSearchResults(await fetchQueryResultsFromTermAndValue(searchTerm, searchValue))
+            } catch (error) {
+                console.error(error)
+            } finally {
+                setIsLoading(false);
+            }
+        }}></a>
+    </span>
+  )
 }
 
 /**
@@ -67,8 +81,39 @@ const Searchable = (props) => {
  * 
  * This component should be exported as default.
  */
-const Feature = (props) => {
-
+const Feature = ({featuredResult}) => {
+//  const {title, dated, images, primaryimageurl, description, culture, style, technique, medium, dimensions, people, department, division, contact, creditline} = featuredResult
+//  destructuring threw errors breaking the application
+    if (!featuredResult) {
+        return(
+        <main id="feature">No selection made</main>
+    )} else {
+        return (
+            <main id="feature">
+                <div className='object-feature'>
+                    <header>
+                        <h3>{featuredResult.title}</h3>
+                        <h4>{featuredResult.dated}</h4>
+                    </header>
+                    <section className='facts'>
+                        <span className='title'>Description:</span>
+                        <span className='content'>{featuredResult.description}</span>
+                        <span className="title">Dimensions:</span>
+                        <span className="content">{featuredResult.dimensions}</span>
+                        <span className='title'>Origin:</span>
+                        <span className='content'>{featuredResult.culture}</span>
+                        <span className='title'>Credit to:</span>
+                        <span className='content'>{featuredResult.creditline}</span>
+                        <span className='title'>Contact:</span>
+                        <span className='content'>{featuredResult.contact}</span>
+                    </section>
+                    <section className='photos'>
+                        <img src={featuredResult.primaryimageurl} alt={featuredResult.description} />
+                    </section>
+                </div>
+            </main>
+        )
+    }
 }
 
 export default Feature;
